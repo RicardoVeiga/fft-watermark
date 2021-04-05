@@ -1,9 +1,11 @@
 import numpy
 from numpy.fft import fft2, ifft2, fftshift, ifftshift
-from scipy import misc
-from scipy import ndimage
+import imageio
 import math
 import random
+import pathlib
+
+current_path = pathlib.Path(__file__).parent.absolute()
 
 def scaleSpectrum(A):
    return numpy.real(numpy.log10(numpy.absolute(A) + numpy.ones(A.shape)))
@@ -49,11 +51,11 @@ if __name__ == "__main__":
    secretKey = 57846874321257
    alpha = 0
 
-   theImage = ndimage.imread(filename, flatten=True)
+   theImage = imageio.imread(filename, as_gray=True)
    watermark = makeWatermark(theImage.shape, min(theImage.shape) / 4, secretKey=secretKey)
 
-   misc.imsave("images/watermark-spectrum.png", watermark)
+   imageio.imwrite("images/watermark-spectrum.png", watermark)
 
    watermarked = numpy.real(applyWatermark(theImage, watermark, alpha))
-   misc.imsave("%s-watermarked-%.3f.png" % (filename.split('.')[0], alpha), watermarked)
+   imageio.imwrite("%s-watermarked-%.3f.png" % (filename.split('.')[0], alpha), watermarked)
 
